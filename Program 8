@@ -1,0 +1,88 @@
+//write a c program to implement recursive decent parsing for the grammar
+E->E+T/T
+T->T*F/F
+F->(E)/id
+
+program:
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+char input[100];
+int pos = 0;
+
+void E();
+void Eprime();
+void T();
+void Tprime();
+void F();
+void advance();
+void error();
+
+void advance() {
+    pos++;
+}
+
+void E() {
+    T();
+    Eprime();
+}
+
+void Eprime() {
+    if (input[pos] == '+') {
+        advance();
+        T();
+        Eprime();
+    }
+}
+
+void T() {
+    F();
+    Tprime();
+}
+
+void Tprime() {
+    if (input[pos] == '*') {
+        advance();
+        F();
+        Tprime();
+    }
+}
+
+void F() {
+    if (input[pos] == 'i') {
+        advance();
+        if (input[pos] == 'd') {
+            advance();
+        }
+    } else if (input[pos] == '(') {
+        advance();
+        E();
+        if (input[pos] == ')') {
+            advance();
+        } else {
+            error();
+        }
+    } else {
+        error();
+    }
+}
+
+void error() {
+    printf("Invalid expression\n");
+    exit(0);
+}
+
+int main() {
+    printf("Enter expression: ");
+    scanf("%s", input);
+
+    E();
+
+    if (input[pos] == '\0')
+        printf("Parsing successfully\n");
+    else
+        error();
+
+    return 0;
+}
