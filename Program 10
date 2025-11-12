@@ -1,0 +1,21 @@
+//write a lex program to count a number of words and number of line in a given file or program
+
+program:
+%{
+int wordcount = 0;
+int linecount = 0;
+%}
+
+%%
+ln {linecount++;}
+[\t] + {/*ignore whitespace*/}
+[^\t\n] + {wordcount++;}
+%%
+
+void main()
+{
+printf("enter the text:\n");
+printf("number of lines:%d\n", linecount);
+printf("number of words: %d\n" , wordcount);
+return 0;
+}
