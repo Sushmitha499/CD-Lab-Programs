@@ -1,0 +1,83 @@
+//write a c program to implement first function for the following grammar
+E->E+T/T
+T->T*F/F
+F->(E)/id
+
+program:
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX 20
+
+char prod[MAX][20];
+int n;
+
+int isNonTerminal(char c) {
+    return isupper(c);
+}
+
+void findFirst(char c, char result[]) {
+    // Go through all productions
+    for (int i = 0; i < n; i++) {
+        if (prod[i][0] == c) {
+            int j = 3; // skip "A->"
+
+            // Loop through right-hand side
+            while (prod[i][j] != '\0' && prod[i][j] != '|') {
+                if (!isNonTerminal(prod[i][j])) {
+                    // Terminal or id
+                    if (prod[i][j] == 'i' && prod[i][j+1] == 'd') {
+                        strcat(result, "id");
+                        break;
+                    } else {
+                        char temp[2] = {prod[i][j], '\0'};
+                        strcat(result, temp);
+                        break;
+                    }
+                } else {
+                    // Non-terminal → recursive call
+                    findFirst(prod[i][j], result);
+                    break;
+                }
+                j++;
+            }
+        }
+    }
+}
+
+int main() {
+    printf("Enter number of productions: ");
+    scanf("%d", &n);
+
+    printf("Enter productions (e.g. E->E+T|T):\n");
+    for (int i = 0; i < n; i++)
+        scanf("%s", prod[i]);
+
+    printf("\n--- FIRST Sets ---\n");
+    for (int i = 0; i < n; i++) {
+        char nt = prod[i][0];
+        char first[50] = "";
+        findFirst(nt, first);
+
+        // Remove duplicates
+        char unique[50] = "";
+        for (int j = 0; j < strlen(first); j++) {
+            if (strchr(unique, first[j]) == NULL)
+                strncat(unique, &first[j], 1);
+        }
+
+        printf("FIRST(%c) = { ", nt);
+        for (int j = 0; j < strlen(unique); j++) {
+            if (unique[j] == 'i' && unique[j+1] == 'd') {
+                printf("id");
+                j++;
+            } else
+                printf("%c", unique[j]);
+
+            if (j < strlen(unique) - 1) printf(", ");
+        }
+        printf(" }\n");
+    }
+    return 0;
+}
