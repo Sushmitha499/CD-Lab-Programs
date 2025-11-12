@@ -1,0 +1,52 @@
+//write a yacc program to implement topdown parser for the following grammar
+E->E+T/T
+T->T*F/F
+F->(E)/id
+
+program:
+#include<stdio.h>
+#include,stdlib.h>
+void yyerror(const char*s);
+int yylex(void);
+%}
+%token ID
+%left '+' '*'
+
+%%
+:T Eprime
+;
+Eprime: '+' T Eprime
+|/*E*/
+;
+T: F Tprime
+;
+Tprime: '*' F Tprime
+|/*E*/
+;
+F: '('E')'
+|ID
+;
+%%
+
+void yyerror(const char*s)
+{
+fprintf(stderr, "Error:%s\n", s);
+}
+int main()
+{
+printf('enter an expression:\n");
+if(yyparse() == 0)
+printf('parsing successfully\n");
+return 0;
+}
+//topdown.l
+%{
+#include "y.tab.h"
+%}
+
+%%
+[a-zA-Z][a-zA-Z0-9]* {return ID;}
+[\t\n]  ;
+[+ * ()] {return yytext[0];}
+.  {printf("invalid characters:%s\n", yytext);}
+%%
