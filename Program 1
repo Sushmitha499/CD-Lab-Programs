@@ -1,3 +1,5 @@
+//
+
 Write a lex program to identify the valid identifier
 %{
     #include<stdio.h>
